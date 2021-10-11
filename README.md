@@ -5,6 +5,8 @@ This is a simple package for describing a continuous variable with a set of cont
 # Examples
 
 ```julia
+julia> using Histograms
+
 julia> b = Bin(1, 20.5)
 Bin(1, 20.5, >=, <)
 
