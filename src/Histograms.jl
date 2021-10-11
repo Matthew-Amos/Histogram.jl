@@ -5,7 +5,7 @@ export Bin, Histogram
 using Statistics: quantile
 
 """
-    Bin(lb, ub lbf = (>=), ubf = (<))
+    Bin(lb, ub; lbf = (>=), ubf = (<))
 
 # Description
 A bin specifying a lowerbound, upperbound, and optional comparison operators.
@@ -28,7 +28,7 @@ julia> b.([0, 1, 20.5, 30])
  0
  0
 
-julia> Bin(0.5, 0.8, >, <=)
+julia> Bin(0.5, 0.8, lbf=(>), ubf=(<=))
 Bin(0.5, 0.8, >, <=)
 ```
 """
@@ -39,12 +39,12 @@ struct Bin
     ubf::Function
 end
 
-Bin(lb, ub, lbf=(>=), ubf=(<)) = Bin(lb, ub, lbf, ubf)
+Bin(lb, ub; lbf=(>=), ubf=(<)) = Bin(lb, ub, lbf, ubf)
 (b::Bin)(v) = b.lbf(v, b.lb) & b.ubf(v, b.ub)
 
 """
     Histogram([Bin(1, 2), Bin(3, 4)])
-    Histogram(randn(1000), 10, lower_tail=true, upper_tail=true)
+    Histogram(randn(1000), 10, lower_tail=true, upper_tail=true; nargs...)
 
 A set of contiguous `Bin` that describes a distribution.
 
@@ -85,7 +85,7 @@ struct Histogram
     bins::Vector{Bin}
 end
 
-function Histogram(v, n, lower_tail=true, upper_tail=true)
+function Histogram(v, n, lower_tail=true, upper_tail=true; nargs...)
     @assert n > 1
 
     q = quantile(v, collect(1:n) ./ n)
@@ -94,7 +94,7 @@ function Histogram(v, n, lower_tail=true, upper_tail=true)
 
     bins = Vector{Bin}(undef, length(q)-1)
     @inbounds for i in 2:length(q)
-        bins[i-1] = Bin(q[i-1], q[i])
+        bins[i-1] = Bin(q[i-1], q[i]; nargs...)
     end
 
     Histogram(bins)

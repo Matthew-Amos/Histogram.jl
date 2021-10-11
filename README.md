@@ -20,7 +20,7 @@ julia> b.([0, 1, 20.5, 30])
  0
  0
 
-julia> Bin(0.5, 0.8, >, <=)
+julia> Bin(0.5, 0.8, lbf=(>), ubf=(<=))
 Bin(0.5, 0.8, >, <=)
 
 julia> h = Histogram([Bin(1, 5), Bin(5, 10)])
